@@ -11,10 +11,12 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "db:seed": "tsx supabase/seed.ts"
   },
   "devDependencies": {
-    "turbo": "^2.5.0"
+    "turbo": "^2.5.0",
+    "tsx": "^4.19.0"
   },
   "overrides": {
     "react": "19.2.8",
