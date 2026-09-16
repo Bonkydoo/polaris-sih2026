@@ -234,8 +234,8 @@ async function main() {
 
   // ---- Purchase requisitions + orders -------------------------------------
   const poDefs = [
-    { vendor: "Antarctic Fuel Logistics Pvt Ltd", items_summary: "Aviation turbine fuel, 4,000L", packing_deadline: "2026-09-22", committed_delivery_date: "2026-09-18", status: "at-risk" },
-    { vendor: "Polarquip Spares & Instruments", items_summary: "Snowmobile drive belts, spares kit", packing_deadline: "2026-09-25", committed_delivery_date: "2026-09-24", status: "late" },
+    { vendor: "Antarctic Fuel Logistics Pvt Ltd", items_summary: "Aviation turbine fuel, 4,000L", packing_deadline: "2026-09-22", committed_delivery_date: null, status: "at-risk" },
+    { vendor: "Polarquip Spares & Instruments", items_summary: "Snowmobile drive belts, spares kit", packing_deadline: "2026-09-25", committed_delivery_date: "2026-09-27", status: "late" },
     { vendor: "Southern Ocean Provisions Co.", items_summary: "Frozen protein stores, 600kg", packing_deadline: "2026-09-30", committed_delivery_date: "2026-09-26", status: "on-track" },
     { vendor: "Meditrans Cold Chain", items_summary: "Cold-chain antibiotics, trauma refills", packing_deadline: "2026-09-28", committed_delivery_date: "2026-09-20", status: "on-track" },
     { vendor: "Ny-Ålesund Arctic Supply AS", items_summary: "Himadri general provisions restock", packing_deadline: "2026-10-12", committed_delivery_date: "2026-10-05", status: "delivered" },

@@ -1,4 +1,4 @@
-import { Compass, Ship, Boxes, Users, Sparkles, LogOut } from "lucide-react";
+import { Compass, Ship, Boxes, Users, Sparkles, MessageCircle, LogOut } from "lucide-react";
 import { requireProfile } from "@/lib/data/profile";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { daysUntil } from "@/lib/derive";
@@ -11,6 +11,7 @@ const NAV = [
   { href: "/inventory", label: "Station Inventory", icon: Boxes },
   { href: "/personnel", label: "Personnel & Safety", icon: Users },
   { href: "/ai-activity", label: "AI Activity", icon: Sparkles, commandStaffOnly: true },
+  { href: "/copilot", label: "Command Copilot", icon: MessageCircle, commandStaffOnly: true },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
