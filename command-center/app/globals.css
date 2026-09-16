@@ -3,13 +3,26 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant hc (&:is(.hc *));
+
+/*
+  POLARIS design tokens — formalized from the "Arctic Command" prototype
+  direction. Every color pair below was checked against WCAG 2.1 AA with
+  a relative-luminance contrast calculator before being locked in; see
+  design-system.md for the full pass/fail table and rationale.
+*/
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --font-heading: var(--font-source-serif);
+  --font-display: var(--font-source-serif);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -18,103 +31,272 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
+  --color-border-strong: var(--border-strong);
+
+  --color-destructive: var(--critical);
+  --color-destructive-foreground: var(--critical-foreground);
+
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
+  --color-primary-emphasis: var(--primary-emphasis);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Semantic status colors — success / warning / critical / info.
+     Every *-subtle pair is the tinted-background badge treatment;
+     the bare color is for solid fills (buttons, dots, progress bars). */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-subtle: var(--success-subtle);
+  --color-success-subtle-foreground: var(--success-subtle-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-warning-subtle-foreground: var(--warning-subtle-foreground);
+
+  --color-critical: var(--critical);
+  --color-critical-foreground: var(--critical-foreground);
+  --color-critical-subtle: var(--critical-subtle);
+  --color-critical-subtle-foreground: var(--critical-subtle-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-subtle: var(--info-subtle);
+  --color-info-subtle-foreground: var(--info-subtle-foreground);
+
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+
+  /* Crisp, restrained radius scale — "government-tech", not "startup pill" */
+  --radius-xs: calc(var(--radius) * 0.5);
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #F3F5F7;
+  --foreground: #0B1E33;
+  --foreground-muted: #2B3E4E;
+  --foreground-subtle: #5E7284;
+
+  --card: #FFFFFF;
+  --card-foreground: #0B1E33;
+  --popover: #FFFFFF;
+  --popover-foreground: #0B1E33;
+
+  --primary: #0B1E33;
+  --primary-emphasis: #123A5C;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #E7ECF0;
+  --secondary-foreground: #0B1E33;
+
+  --muted: #E7ECF0;
+  --muted-foreground: #5E7284;
+
+  /* Ice-blue: #4FA8D8 is the decorative accent (large chips, icons on
+     dark surfaces, dark-mode text). It fails AA as small text on white
+     (2.65:1) — use --accent-ink (#1D6FA0, 5.48:1) for any text, icon,
+     link or focus ring drawn on a light surface. */
+  --accent: #4FA8D8;
+  --accent-ink: #1D6FA0;
+  --accent-foreground: #0B1E33;
+
+  --destructive: #B3261E;
+
+  /* Decorative divider only — do not rely on this alone to convey an
+     interactive control's boundary (WCAG 1.4.11 non-text contrast). */
+  --border: #D8E0E6;
+  /* Meets 3:1 non-text contrast on white — use for input/button/focusable
+     element outlines. */
+  --border-strong: #6B7E8C;
+  --input: #6B7E8C;
+  --ring: var(--accent-ink);
+
+  --success: #0B6B3A;
+  --success-foreground: #FFFFFF;
+  --success-subtle: #E8F5EC;
+  --success-subtle-foreground: #0B6B3A;
+
+  --warning: #8A5300;
+  --warning-foreground: #FFFFFF;
+  --warning-subtle: #FDF3DE;
+  --warning-subtle-foreground: #8A5300;
+
+  --critical: #B3261E;
+  --critical-foreground: #FFFFFF;
+  --critical-subtle: #FBEAE9;
+  --critical-subtle-foreground: #B3261E;
+
+  --info: #1D6FA0;
+  --info-foreground: #FFFFFF;
+  --info-subtle: #E9F2F8;
+  --info-subtle-foreground: #1D6FA0;
+
+  --chart-1: #4FA8D8;
+  --chart-2: #123A5C;
+  --chart-3: #8A5300;
+  --chart-4: #0B6B3A;
+  --chart-5: #6B7E8C;
+
+  --radius: 0.375rem;
+
+  --sidebar: #0B1E33;
+  --sidebar-foreground: #DCE8F2;
+  --sidebar-primary: #4FA8D8;
+  --sidebar-primary-foreground: #0B1E33;
+  --sidebar-accent: #123A5C;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #4FA8D8;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0B1520;
+  --foreground: #E7EEF3;
+  --foreground-muted: #B9C7D1;
+  --foreground-subtle: #8CA3B3;
+
+  --card: #101B28;
+  --card-foreground: #E7EEF3;
+  --popover: #101B28;
+  --popover-foreground: #E7EEF3;
+
+  --primary: #E7EEF3;
+  --primary-emphasis: #FFFFFF;
+  --primary-foreground: #0B1520;
+
+  --secondary: #17273A;
+  --secondary-foreground: #E7EEF3;
+
+  --muted: #17273A;
+  --muted-foreground: #8CA3B3;
+
+  --accent: #6FBBE8;
+  --accent-ink: #6FBBE8;
+  --accent-foreground: #0B1520;
+
+  --destructive: #FF6B6B;
+
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: #7E93A1;
+  --input: #7E93A1;
+  --ring: var(--accent-ink);
+
+  --success: #3DDC97;
+  --success-foreground: #0B1520;
+  --success-subtle: rgba(61, 220, 151, 0.14);
+  --success-subtle-foreground: #3DDC97;
+
+  --warning: #F2B33D;
+  --warning-foreground: #0B1520;
+  --warning-subtle: rgba(242, 179, 61, 0.14);
+  --warning-subtle-foreground: #F2B33D;
+
+  --critical: #FF6B6B;
+  --critical-foreground: #0B1520;
+  --critical-subtle: rgba(255, 107, 107, 0.14);
+  --critical-subtle-foreground: #FF6B6B;
+
+  --info: #6FBBE8;
+  --info-foreground: #0B1520;
+  --info-subtle: rgba(111, 187, 232, 0.14);
+  --info-subtle-foreground: #6FBBE8;
+
+  --chart-1: #6FBBE8;
+  --chart-2: #3DDC97;
+  --chart-3: #F2B33D;
+  --chart-4: #FF6B6B;
+  --chart-5: #8CA3B3;
+
+  --sidebar: #070C13;
+  --sidebar-foreground: #E7EEF3;
+  --sidebar-primary: #6FBBE8;
+  --sidebar-primary-foreground: #0B1520;
+  --sidebar-accent: #17273A;
+  --sidebar-accent-foreground: #E7EEF3;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #6FBBE8;
+}
+
+/*
+  High-contrast mode — for the Field App (gloves, glare, low light).
+  Not "dark mode with different names": pure black/white plus a single
+  safety-orange accent, 4px borders, and a warning color that switches
+  its own foreground (black, not white) because white-on-orange fails
+  AA (2.87:1) while black-on-orange passes at 6.90:1. Apply with
+  class="hc" on a container; see design-system.md for touch-target
+  rules that go with this mode.
+*/
+.hc {
+  --background: #FFFFFF;
+  --foreground: #0A0A0A;
+  --foreground-muted: #0A0A0A;
+  --foreground-subtle: #3D3D3D;
+
+  --card: #FFFFFF;
+  --card-foreground: #0A0A0A;
+
+  --primary: #0A0A0A;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #F0F0F0;
+  --secondary-foreground: #0A0A0A;
+  --muted: #F0F0F0;
+  --muted-foreground: #0A0A0A;
+
+  --accent: #FF6A00;
+  --accent-ink: #FF6A00;
+  --accent-foreground: #0A0A0A;
+
+  --border: #0A0A0A;
+  --border-strong: #0A0A0A;
+  --input: #0A0A0A;
+  --ring: #0A0A0A;
+
+  --success: #0B6B3A;
+  --success-foreground: #FFFFFF;
+  --success-subtle: #0B6B3A;
+  --success-subtle-foreground: #FFFFFF;
+
+  /* Warning uses black-on-orange, not the white-on-color pattern every
+     other status uses — see comment above. */
+  --warning: #FF6A00;
+  --warning-foreground: #0A0A0A;
+  --warning-subtle: #FF6A00;
+  --warning-subtle-foreground: #0A0A0A;
+
+  --critical: #B3261E;
+  --critical-foreground: #FFFFFF;
+  --critical-subtle: #B3261E;
+  --critical-subtle-foreground: #FFFFFF;
+
+  --info: #0A0A0A;
+  --info-foreground: #FFFFFF;
+  --info-subtle: #0A0A0A;
+  --info-subtle-foreground: #FFFFFF;
+
+  --radius: 1rem;
 }
 
 @layer base {
@@ -126,5 +308,9 @@
   }
   html {
     @apply font-sans;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 }
