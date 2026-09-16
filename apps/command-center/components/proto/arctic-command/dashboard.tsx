@@ -122,7 +122,7 @@ export default function ArcticCommandDashboard() {
         </div>
 
         <Link
-          href="/"
+          href="/proto"
           className="flex items-center gap-2 border-t border-sidebar-border px-5 py-3.5 text-xs text-sidebar-foreground/70 transition hover:text-white"
         >
           <ArrowLeft className="size-3.5" /> All directions

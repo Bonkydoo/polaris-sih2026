@@ -2,10 +2,18 @@ import { createServerClient, type SetAllCookies } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@polaris/supabase-client";
 
+const PUBLIC_PATHS = ["/login", "/proto"];
+
+function isPublicPath(pathname: string) {
+  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
 /**
- * Refreshes the Supabase auth session on every request. Required by the
+ * Refreshes the Supabase auth session on every request (required by the
  * SSR cookie-based auth flow — without this, sessions silently expire
- * mid-visit. Called from proxy.ts at the app root.
+ * mid-visit) and redirects unauthenticated requests away from protected
+ * routes. This is UX convenience only — the real access boundary is RLS
+ * at the database, not this check.
  */
 export async function updateSupabaseSession(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -27,9 +35,23 @@ export async function updateSupabaseSession(request: NextRequest) {
     }
   );
 
-  // Touches the session so an expired token gets refreshed before any
-  // Server Component in this request tree reads it.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { pathname } = request.nextUrl;
+
+  if (!user && !isPublicPath(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  if (user && pathname === "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
+  }
 
   return response;
 }

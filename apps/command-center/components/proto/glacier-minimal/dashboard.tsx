@@ -111,7 +111,7 @@ export default function GlacierMinimalDashboard() {
           </nav>
 
           <Link
-            href="/"
+            href="/proto"
             className="flex items-center gap-1.5 text-xs font-semibold text-[#5C7A87] hover:text-[#12303D]"
           >
             <ArrowLeft className="size-3.5" /> All directions

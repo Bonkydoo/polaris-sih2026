@@ -65,7 +65,7 @@ export default function FieldFirstDashboard() {
   return (
     <div className="min-h-screen bg-[#1A1A1A] py-10">
       <div className="mx-auto mb-6 flex max-w-[420px] items-center justify-between px-1">
-        <Link href="/" className="flex items-center gap-1.5 text-sm font-bold text-white/60 hover:text-white">
+        <Link href="/proto" className="flex items-center gap-1.5 text-sm font-bold text-white/60 hover:text-white">
           <ArrowLeft className="size-4" /> All directions
         </Link>
         <span className="text-xs font-bold uppercase tracking-widest text-white/40">

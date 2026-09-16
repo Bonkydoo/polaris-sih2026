@@ -125,7 +125,7 @@ export default function PolarOpsDarkDashboard() {
           })}
         </nav>
         <Link
-          href="/"
+          href="/proto"
           className="mt-auto flex size-10 items-center justify-center rounded-md text-[#4C6578] hover:bg-white/5 hover:text-[#C9D8E3]"
           title="All directions"
         >
