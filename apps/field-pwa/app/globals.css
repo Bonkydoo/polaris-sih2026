@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@polaris/ui/globals.css";
+
+/* Field App defaults to the high-contrast token set at the root, not as
+   an opt-in — outdoor glare and gloved use are the normal case here, not
+   an edge case. See design-system.md's .hc block. */
+html {
+  color-scheme: light;
+}
