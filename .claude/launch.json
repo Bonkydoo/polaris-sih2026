@@ -18,6 +18,15 @@
         "export PATH=\"/Users/tanmaygupta/.nvm/versions/node/v24.21.0/bin:$PATH\" && cd /Users/tanmaygupta/Desktop/SIH/apps/field-pwa && npm run build && npx --yes serve -s out -l 3002"
       ],
       "port": 3002
+    },
+    {
+      "name": "vendor-portal",
+      "runtimeExecutable": "/bin/bash",
+      "runtimeArgs": [
+        "-c",
+        "export PATH=\"/Users/tanmaygupta/.nvm/versions/node/v24.21.0/bin:$PATH\" && cd /Users/tanmaygupta/Desktop/SIH && npm run dev --workspace vendor-portal"
+      ],
+      "port": 3003
     }
   ]
 }

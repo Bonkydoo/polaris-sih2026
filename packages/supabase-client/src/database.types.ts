@@ -250,6 +250,61 @@ export type Database = {
           },
         ]
       }
+      compliance_documents: {
+        Row: {
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          id: string
+          purchase_order_id: string | null
+          storage_path: string
+          uploaded_by: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          id?: string
+          purchase_order_id?: string | null
+          storage_path: string
+          uploaded_by: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string
+          id?: string
+          purchase_order_id?: string | null
+          storage_path?: string
+          uploaded_by?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compliance_documents_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_documents_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consumption_logs: {
         Row: {
           id: string
@@ -1139,6 +1194,7 @@ export type Database = {
         | "report_drafter"
         | "command_copilot"
       cargo_category: "fuel" | "food" | "medical" | "spares" | "instruments"
+      document_type: "customs" | "msds" | "quality_cert" | "other"
       expedition_status: "planning" | "active" | "transit" | "closed"
       hazard_type: "crevasse" | "wildlife" | "whiteout-risk"
       incident_severity: "low" | "medium" | "high" | "critical"
@@ -1309,6 +1365,7 @@ export const Constants = {
         "command_copilot",
       ],
       cargo_category: ["fuel", "food", "medical", "spares", "instruments"],
+      document_type: ["customs", "msds", "quality_cert", "other"],
       expedition_status: ["planning", "active", "transit", "closed"],
       hazard_type: ["crevasse", "wildlife", "whiteout-risk"],
       incident_severity: ["low", "medium", "high", "critical"],
