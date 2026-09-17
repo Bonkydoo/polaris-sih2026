@@ -7,6 +7,7 @@
 // of the manifest.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
 import { draftWithClaude } from "../_shared/claude.ts";
+import { cargoSeverity, classifyCargoItems } from "./logic.ts";
 
 Deno.serve(async () => {
   const supabase = supabaseAdmin();
@@ -28,10 +29,7 @@ Deno.serve(async () => {
       received_quantity: number | null;
     }[];
 
-    const mismatched = items.filter(
-      (i) => i.received_quantity !== null && i.received_quantity !== i.quantity
-    );
-    const unchecked = items.filter((i) => i.received_quantity === null);
+    const { mismatched, unchecked } = classifyCargoItems(items);
     if (mismatched.length === 0 && unchecked.length === 0) continue;
 
     const { data: existing } = await supabase
@@ -66,7 +64,7 @@ Deno.serve(async () => {
       title: `Cargo reconciliation — ${station?.name ?? "shipment"} (${shipment.mode})`,
       detail: draft.text,
       output: { mismatched: mismatched.length, unchecked: unchecked.length },
-      severity: mismatched.length > 0 ? "critical" : "watch",
+      severity: cargoSeverity(mismatched.length),
       status: "pending_review",
     });
     if (runErr) {

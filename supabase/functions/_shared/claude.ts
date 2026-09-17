@@ -8,9 +8,11 @@
 // ANTHROPIC_API_KEY as a secret (`supabase secrets set`); nothing else
 // changes.
 
+import { extractClaudeText, type ClaudeDraftResult } from "./claude-logic.ts";
+
 const MODEL = "claude-sonnet-5";
 
-export type ClaudeDraftResult = { text: string; source: "claude" | "fallback" };
+export type { ClaudeDraftResult };
 
 export async function draftWithClaude(params: {
   system: string;
@@ -45,13 +47,7 @@ export async function draftWithClaude(params: {
     }
 
     const data = await res.json();
-    const text = data.content
-      ?.filter((block: { type: string }) => block.type === "text")
-      .map((block: { text: string }) => block.text)
-      .join("\n")
-      .trim();
-
-    return text ? { text, source: "claude" } : { text: params.fallback, source: "fallback" };
+    return extractClaudeText(data, params.fallback);
   } catch (err) {
     console.error("Claude API call threw:", err);
     return { text: params.fallback, source: "fallback" };

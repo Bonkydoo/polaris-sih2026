@@ -7,6 +7,7 @@
 // a complete, reviewable document.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
 import { draftWithClaude } from "../_shared/claude.ts";
+import { countByStatus, isFlaggedForReorder } from "./logic.ts";
 
 Deno.serve(async () => {
   const supabase = supabaseAdmin();
@@ -27,15 +28,11 @@ Deno.serve(async () => {
     supabase.from("purchase_orders").select("status"),
   ]);
 
-  const flaggedItems = (inventoryRes.data ?? []).filter((i) => {
-    const days = i.consumption_rate_per_day > 0 ? i.quantity / i.consumption_rate_per_day : Infinity;
-    return days <= i.reorder_threshold_days;
-  });
+  const flaggedItems = (inventoryRes.data ?? []).filter((i) =>
+    isFlaggedForReorder(i.quantity, i.consumption_rate_per_day, i.reorder_threshold_days)
+  );
 
-  const poCounts = (posRes.data ?? []).reduce<Record<string, number>>((acc, po) => {
-    acc[po.status] = (acc[po.status] ?? 0) + 1;
-    return acc;
-  }, {});
+  const poCounts = countByStatus(posRes.data ?? []);
 
   const facts = {
     expedition: expedition.name,

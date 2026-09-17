@@ -35,9 +35,13 @@ body is `text-sm`, captions/eyebrows are `text-[11px] uppercase tracking-wide`.
 ## Color tokens
 
 Every pair below was checked with a WCAG 2.1 relative-luminance contrast
-calculator (`scripts` are throwaway, not committed — see the numbers here).
-Where the obvious choice failed, the token was changed; the table documents
-what and why, not just the final answer.
+calculator. As of the Prompt 3 quality pass this is no longer a one-off,
+throwaway check — `packages/ui/src/contrast.test.ts` parses the real
+tokens out of `globals.css` and re-verifies every pair below (light, dark
+and `.hc`) on every `npm test` run, so a future token edit that breaks AA
+fails CI instead of shipping silently. Where the obvious choice failed,
+the token was changed; the table documents what and why, not just the
+final answer.
 
 ### Base (light mode, default)
 
@@ -48,6 +52,7 @@ what and why, not just the final answer.
 | `--foreground` | `#0B1E33` | Primary text (16.83:1 on white) |
 | `--foreground-muted` | `#2B3E4E` | Secondary body text (11.04:1) |
 | `--foreground-subtle` | `#5E7284` | Captions, eyebrows (4.98:1 on white, 4.56:1 on app bg — both pass AA) |
+| `--muted-foreground` | `#586B7D` | Text on `--muted` panels (4.63:1). **Known failure caught and fixed:** originally shared `--foreground-subtle`'s `#5E7284` — that only reaches 4.19:1 against `--muted` specifically (it was never checked against that pairing, only against `background`/white), so the contrast test added in the Prompt 3 quality pass caught it and it was darkened slightly. |
 | `--border` | `#D8E0E6` | **Decorative divider only.** 1.34:1 — do not rely on this alone to convey an interactive boundary (WCAG 1.4.11) |
 | `--border-strong` / `--input` | `#6B7E8C` | Input/button/focusable-element outlines — 4.21:1, clears the 3:1 non-text threshold |
 | `--primary` | `#0B1E33` | Buttons, active nav, sidebar |
@@ -87,6 +92,15 @@ accent, for outdoor glare and gloved use:
 - `--accent: #FF6A00` with **black** foreground (`#0A0A0A`, 6.90:1) — white
   text on this orange fails AA (2.87:1), so warning is the one status color
   whose foreground flips relative to every other tone
+- `--accent-ink: #B84D00` (5.12:1 on white) — **known failure caught and
+  fixed:** this token originally reused the bright `--accent` value
+  directly, which is exactly the same 2.87:1 failure as above but this
+  time as *text*, not a fill — components like `timeline-step` and
+  `map-panel` render `text-accent-ink` for links/current-state labels, and
+  in every other mode `--accent-ink` is specifically the "safe as text"
+  variant (see the base table above). A deeper safety-orange keeps the
+  same hue while actually passing AA — worth catching precisely because
+  `.hc` is the Field App's own accessibility mode.
 - `--border` / `--border-strong`: `#0A0A0A` at 3–4px — never rely on a
   hairline in this mode
 - `--radius: 1rem` — bigger corner radius reads as "big friendly touch

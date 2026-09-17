@@ -8,11 +8,7 @@
 // graph; if that logic changes, update both.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
 import { draftWithClaude } from "../_shared/claude.ts";
-
-function daysRemaining(quantity: number, ratePerDay: number) {
-  if (ratePerDay <= 0) return Infinity;
-  return quantity / ratePerDay;
-}
+import { daysRemaining, isCriticalStock, packingDeadlineFor, reorderQuantity, reorderSeverity } from "./logic.ts";
 
 Deno.serve(async () => {
   const supabase = supabaseAdmin();
@@ -32,8 +28,7 @@ Deno.serve(async () => {
 
   for (const item of inventory ?? []) {
     const days = daysRemaining(item.quantity, item.consumption_rate_per_day);
-    const isCritical = days <= item.reorder_threshold_days * 0.75;
-    if (!isCritical) continue;
+    if (!isCriticalStock(days, item.reorder_threshold_days)) continue;
 
     // Skip if an unreviewed draft already covers this exact item.
     const { data: existing } = await supabase
@@ -49,14 +44,8 @@ Deno.serve(async () => {
     const station = item.stations as { id: string; name: string; code: string } | null;
     if (!station) continue;
 
-    const reorderQty = Math.max(
-      0,
-      Math.round(item.consumption_rate_per_day * item.reorder_threshold_days * 2 - item.quantity)
-    );
-    const packingDeadline = new Date(Date.now() + Math.max(1, Math.floor(days) - 5) * 86400000);
-    if (expedition && new Date(expedition.window_close) < packingDeadline) {
-      packingDeadline.setTime(new Date(expedition.window_close).getTime());
-    }
+    const reorderQty = reorderQuantity(item.consumption_rate_per_day, item.reorder_threshold_days, item.quantity);
+    const packingDeadline = packingDeadlineFor(days, new Date(), expedition?.window_close);
 
     const { data: requisition, error: reqErr } = await supabase
       .from("purchase_requisitions")
@@ -94,7 +83,7 @@ Deno.serve(async () => {
         title: `Drafted requisition — ${item.name}, ${station.name}`,
         detail: draft.text,
         output: { requisition_id: requisition.id, quantity: reorderQty, unit: item.unit },
-        severity: days <= item.reorder_threshold_days * 0.5 ? "critical" : "watch",
+        severity: reorderSeverity(days, item.reorder_threshold_days),
         status: "pending_review",
       })
       .select("id")

@@ -108,7 +108,10 @@
   --secondary-foreground: #0B1E33;
 
   --muted: #E7ECF0;
-  --muted-foreground: #5E7284;
+  /* Slightly darker than --foreground-subtle (#5E7284, 4.98:1 on white) -
+     that value only reaches 4.19:1 on this token's actual pairing
+     surface, --muted, failing AA. #586B7D clears it at 4.63:1. */
+  --muted-foreground: #586B7D;
 
   /* Ice-blue: #4FA8D8 is the decorative accent (large chips, icons on
      dark surfaces, dark-mode text). It fails AA as small text on white
@@ -262,7 +265,14 @@
   --muted-foreground: #0A0A0A;
 
   --accent: #FF6A00;
-  --accent-ink: #FF6A00;
+  /* --accent-ink is the "safe as text/icon/link/border" token in every
+     other mode (see :root) - reusing raw --accent here fails AA as text
+     (2.87:1 on white), which matters most in exactly this mode (Field
+     App, gloves/glare/low-light). #B84D00 is a deeper safety-orange that
+     clears AA at 5.12:1 while --accent stays the bright fill color for
+     buttons/badges (those already pair it with black text, see
+     --warning below). */
+  --accent-ink: #B84D00;
   --accent-foreground: #0A0A0A;
 
   --border: #0A0A0A;

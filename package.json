@@ -11,12 +11,14 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
+    "test": "vitest run --exclude '**/supabase/tests/**'",
+    "test:integration": "vitest run supabase/tests",
     "db:seed": "tsx --env-file=.env.local supabase/seed.ts"
   },
   "devDependencies": {
+    "tsx": "^4.19.0",
     "turbo": "^2.5.0",
-    "tsx": "^4.19.0"
+    "vitest": "^5.0.1"
   },
   "overrides": {
     "react": "19.2.8",

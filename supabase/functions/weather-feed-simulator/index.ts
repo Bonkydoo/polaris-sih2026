@@ -8,8 +8,7 @@
 // riskScoreFrom() and everything downstream (weather-contingency-planner)
 // unchanged.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
-
-type RawForecast = { windSpeedKts: number; seaStateM: number; visibilityKm: number; pressureHpa: number };
+import { riskScoreFrom, type RawForecast } from "./logic.ts";
 
 function generateMockForecast(): RawForecast {
   // Weighted toward calm conditions with an occasional developing system,
@@ -28,14 +27,6 @@ function generateMockForecast(): RawForecast {
         visibilityKm: 8 + Math.random() * 12,
         pressureHpa: 1000 + Math.random() * 20,
       };
-}
-
-function riskScoreFrom(f: RawForecast): number {
-  const windRisk = Math.min(100, (f.windSpeedKts / 60) * 100);
-  const seaRisk = Math.min(100, (f.seaStateM / 8) * 100);
-  const visRisk = Math.min(100, ((15 - f.visibilityKm) / 15) * 100);
-  const pressureRisk = Math.min(100, Math.max(0, ((1000 - f.pressureHpa) / 60) * 100));
-  return Math.round(windRisk * 0.35 + seaRisk * 0.3 + visRisk * 0.15 + pressureRisk * 0.2);
 }
 
 Deno.serve(async () => {

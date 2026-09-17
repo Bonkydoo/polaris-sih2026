@@ -5,8 +5,7 @@
 // has to move.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
 import { draftWithClaude } from "../_shared/claude.ts";
-
-const RISK_THRESHOLD = 60;
+import { contingencySeverity, RISK_THRESHOLD, shouldDraftContingency } from "./logic.ts";
 
 Deno.serve(async () => {
   const supabase = supabaseAdmin();
@@ -48,7 +47,7 @@ Deno.serve(async () => {
       .neq("status", "converted_to_po");
 
     const affectedPoCount = (requisitions ?? []).length;
-    if ((shipments?.length ?? 0) === 0 && affectedPoCount === 0) continue;
+    if (!shouldDraftContingency(shipments?.length ?? 0, affectedPoCount)) continue;
 
     const draft = await draftWithClaude({
       system:
@@ -65,7 +64,7 @@ Deno.serve(async () => {
       title: `Contingency brief — elevated risk at ${station.name}`,
       detail: draft.text,
       output: { risk_score: snap.risk_score, affected_shipments: shipments?.length ?? 0 },
-      severity: snap.risk_score >= 80 ? "critical" : "watch",
+      severity: contingencySeverity(snap.risk_score),
       status: "pending_review",
     });
     if (runErr) {

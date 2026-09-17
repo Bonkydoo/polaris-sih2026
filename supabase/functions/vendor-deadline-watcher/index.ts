@@ -8,6 +8,7 @@
 // missing the packing deadline is what actually strands cargo.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
 import { draftWithClaude } from "../_shared/claude.ts";
+import { daysToDeadline, isTrendingLate, poEscalationSeverity, poEscalationStatus } from "./logic.ts";
 
 Deno.serve(async () => {
   const supabase = supabaseAdmin();
@@ -22,16 +23,13 @@ Deno.serve(async () => {
   const today = new Date();
 
   for (const po of orders ?? []) {
-    const packingDeadline = new Date(po.packing_deadline);
-    const committed = po.committed_delivery_date ? new Date(po.committed_delivery_date) : null;
-    const daysToDeadline = Math.ceil((packingDeadline.getTime() - today.getTime()) / 86400000);
-
-    const trendingLate = !committed || committed > packingDeadline;
-    const alreadyMissed = daysToDeadline < 0;
+    const daysLeft = daysToDeadline(po.packing_deadline, today);
+    const trendingLate = isTrendingLate(po.committed_delivery_date, po.packing_deadline);
+    const alreadyMissed = daysLeft < 0;
     if (!trendingLate && !alreadyMissed) continue;
 
-    const newStatus = alreadyMissed ? "late" : "at-risk";
-    if (po.status !== newStatus) {
+    const newStatus = poEscalationStatus(trendingLate, alreadyMissed);
+    if (newStatus && po.status !== newStatus) {
       await supabase.from("purchase_orders").update({ status: newStatus }).eq("id", po.id);
     }
 
@@ -62,8 +60,8 @@ Deno.serve(async () => {
       input_ref: { purchase_order_id: po.id },
       title: `Escalation drafted — ${vendor?.name ?? "vendor"} PO trending ${alreadyMissed ? "late" : "at-risk"}`,
       detail: draft.text,
-      output: { purchase_order_id: po.id, days_to_deadline: daysToDeadline },
-      severity: alreadyMissed ? "critical" : "watch",
+      output: { purchase_order_id: po.id, days_to_deadline: daysLeft },
+      severity: poEscalationSeverity(alreadyMissed),
       status: "pending_review",
     });
     if (runErr) {
@@ -71,7 +69,7 @@ Deno.serve(async () => {
       continue;
     }
 
-    results.push({ po: po.id, vendor: vendor?.name, daysToDeadline, draftSource: draft.source });
+    results.push({ po: po.id, vendor: vendor?.name, daysToDeadline: daysLeft, draftSource: draft.source });
   }
 
   return Response.json({ processed: results.length, results });

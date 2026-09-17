@@ -24,8 +24,22 @@ clear template when it isn't.
 
 ## Local testing
 
+Each function's decision logic (thresholds, severity, date math — the
+part that's actually worth regression-testing) lives in a sibling
+`logic.ts`, deliberately written with zero Deno APIs so it runs under
+plain Node/vitest without a Deno install or a live Supabase connection.
+`index.ts` imports from it rather than duplicating it inline:
+
 ```bash
-supabase functions serve reorder-forecaster --env-file .env.local --no-verify-jwt
+npm test               # from the repo root — runs every logic.test.ts
+```
+
+For the full request/response path against a real local Supabase (what
+the pure unit tests can't cover — the actual DB round-trip, RLS, and the
+no-API-key fallback wired end to end):
+
+```bash
+supabase functions serve --env-file .env.local --no-verify-jwt
 # in another terminal:
 curl -X POST http://127.0.0.1:54321/functions/v1/reorder-forecaster
 ```

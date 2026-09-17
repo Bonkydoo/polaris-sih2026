@@ -10,6 +10,7 @@
 // silently approximated.
 import { supabaseAdmin } from "../_shared/supabase-admin.ts";
 import { draftWithClaude } from "../_shared/claude.ts";
+import { hoursSinceCheckin, isMissedCheckin, missedCheckinSeverity } from "./logic.ts";
 
 const MISSED_CHECKIN_HOURS = 12;
 
@@ -70,10 +71,8 @@ Deno.serve(async () => {
       .limit(1)
       .maybeSingle();
 
-    const hoursSince = lastCheckin
-      ? (Date.now() - new Date(lastCheckin.checkin_at).getTime()) / 3600000
-      : Infinity;
-    if (hoursSince < MISSED_CHECKIN_HOURS) continue;
+    const hoursSince = hoursSinceCheckin(lastCheckin?.checkin_at ?? null, new Date());
+    if (!isMissedCheckin(hoursSince, MISSED_CHECKIN_HOURS)) continue;
 
     const { data: existing } = await supabase
       .from("ai_agent_runs")
@@ -91,7 +90,7 @@ Deno.serve(async () => {
     await raiseIncident(supabase, {
       stationId: p.station_id,
       title: `Missed check-in — ${profile?.full_name ?? "Personnel"}`,
-      severity: hoursSince > 24 ? "critical" : "high",
+      severity: missedCheckinSeverity(hoursSince),
       detailFallback: `${profile?.full_name ?? "A team member"} (${p.role_title}) has not checked in for ${Math.round(hoursSince)} hours — past the ${MISSED_CHECKIN_HOURS}h threshold. Suggested next step: attempt radio contact, then dispatch a buddy check per the field-movement SOP.`,
       claudePrompt: `Personnel: ${profile?.full_name}, role ${p.role_title}, station ${station?.name}. Hours since last check-in: ${Math.round(hoursSince)}. Threshold: ${MISSED_CHECKIN_HOURS}h.`,
       agentRunTrigger: "on_missed_checkin",
