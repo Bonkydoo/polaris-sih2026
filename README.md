@@ -35,6 +35,49 @@ check-in) is deterministic and always runs. Only the natural-language
 write-up depends on `ANTHROPIC_API_KEY`; without it, every agent falls
 back to a clear template sentence instead (`supabase/functions/_shared/claude.ts`).
 
+## Live deployment
+
+| App | URL |
+|---|---|
+| Command Center | https://command-center-gray-nine.vercel.app |
+| Field PWA | https://field-pwa-six.vercel.app |
+| Vendor Portal | https://vendor-portal-smoky-omega.vercel.app |
+
+Backed by a production Supabase project (`polaris-production`, Mumbai
+`ap-south-1`) with all migrations applied, the 7 Edge Functions deployed,
+and `pg_cron` schedules live (reorder/vendor-deadline nightly, weather
+every 6h, safety + cargo hourly, report weekly). Demo accounts below work
+on all three. No Anthropic API key is set in production — agents use their
+template fallback text, exactly as documented above.
+
+Each app is its own Vercel project with Root Directory `apps/<name>`;
+deploy from the repo root (`.vercelignore` keeps `node_modules`/`.next`
+out of the upload):
+
+```bash
+VERCEL_ORG_ID=<team> VERCEL_PROJECT_ID=<project> vercel --prod --yes
+```
+
+### Demo walkthrough (about 5 minutes)
+
+1. **Vendor Portal** — sign in as the vendor. The aviation-fuel PO shows
+   *At Risk* against its packing deadline; set a committed delivery date
+   and status. Upload a compliance document under Documents.
+2. **Command Center** (ops) — Expedition Overview shows the season
+   countdown, station status and in-transit shipments. Inventory flags
+   the low-diesel item at Bharati; Cargo & Freight shows the PO pipeline.
+3. **AI Activity** — agent-drafted actions (reorder requisition, vendor
+   escalation, contingency briefs) wait for human review. Approve or
+   dismiss one; nothing executes on its own.
+4. **Field PWA** (field user, on a phone or narrow window) — Stock, Team,
+   and the SOS button. Turn the network off (DevTools, Offline), log a
+   consumption entry, and watch the pending badge count up; go back online
+   and it drains.
+5. **Back in the Command Center** — press SOS in the Field PWA, then the
+   Safety Escalation agent raises an incident on its next run (hourly; to
+   show it immediately, POST to the `safety-escalation` function directly
+   — see `supabase/functions/README.md`).
+
 ## Setup
 
 ```bash
